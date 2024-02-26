@@ -1,11 +1,8 @@
-import random
 import time
 import matplotlib.pyplot as plt
+import random
 
-# Generate random input data
-input_data = [random.randint(1, 1000000) for _ in range(10000)]
-
-# QuickSort algorithm
+# Sorting algorithms
 def quickSort(arr):
     if len(arr) <= 1:
         return arr
@@ -15,7 +12,6 @@ def quickSort(arr):
     right = [x for x in arr if x > pivot]
     return quickSort(left) + middle + quickSort(right)
 
-# MergeSort algorithm
 def mergeSort(arr):
     if len(arr) <= 1:
         return arr
@@ -38,35 +34,27 @@ def merge(left, right):
     result.extend(right[r:])
     return result
 
-# HeapSort algorithm
 def heapify(arr, n, i):
     largest = i  
     l = 2 * i + 1     
     r = 2 * i + 2     
-
     if l < n and arr[i] < arr[l]:
         largest = l
-
     if r < n and arr[largest] < arr[r]:
         largest = r
-
     if largest != i:
-        (arr[i], arr[largest]) = (arr[largest], arr[i]) 
+        arr[i], arr[largest] = arr[largest], arr[i] 
         heapify(arr, n, largest)
 
 def heapSort(arr):
     n = len(arr)
-
     for i in range(n // 2 - 1, -1, -1):
         heapify(arr, n, i)
-
     for i in range(n-1, 0, -1):
-        (arr[i], arr[0]) = (arr[0], arr[i])   
+        arr[i], arr[0] = arr[0], arr[i]   
         heapify(arr, i, 0)
-
     return arr
 
-# Selection Sort algorithm
 def selectionSort(arr):
     for i in range(len(arr)):
         min_index = i
@@ -76,22 +64,38 @@ def selectionSort(arr):
         arr[i], arr[min_index] = arr[min_index], arr[i]
     return arr
 
-# Measuring the time for each sorting algorithm
+# Generate random input data
+input_data = [random.randint(1, 10000) for _ in range(1000)]
+
+# Sorting functions and their names
 sort_functions = [quickSort, mergeSort, heapSort, selectionSort]
 sort_names = ['QuickSort', 'MergeSort', 'HeapSort', 'SelectionSort']
-execution_times = []
 
-for sort_func in sort_functions:
-    start_time = time.time()
-    sorted_data = sort_func(input_data.copy())
-    end_time = time.time()
-    execution_time = end_time - start_time
-    execution_times.append(execution_time)
-    print(f"{sort_func.__name__} executed in {execution_time:.6f} seconds.")
+# Collect execution times for each sorting algorithm
+execution_times = [[] for _ in range(len(sort_functions))]
+x = range(100, 1100, 100)
 
-# Plot for all algorithms
-plt.bar(sort_names, execution_times, color=['tab:blue', 'tab:orange', 'tab:brown', 'tab:purple'])
-plt.xlabel('Sorting Algorithms')
-plt.ylabel('Execution Time (seconds)')
+for i in x:
+    for j, sort_func in enumerate(sort_functions):
+        total_time = 0
+        for _ in range(10):  # Repeat 10 times for each input size
+            input_data = [random.randint(1, 10000) for _ in range(i)]
+            start_time = time.time()
+            sorted_data = sort_func(input_data.copy())
+            end_time = time.time()
+            total_time += (end_time - start_time)
+        average_time = total_time / 10  # Calculate the average time
+        execution_times[j].append(average_time)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+
+for i, sort_name in enumerate(sort_names):
+    plt.plot(x, execution_times[i], marker='o', label=sort_name)
+
+plt.xlabel('Input Size')
+plt.ylabel('Average Execution Time (seconds)')
 plt.title('Performance of Sorting Algorithms')
+plt.legend()
+plt.grid(True)
 plt.show()
