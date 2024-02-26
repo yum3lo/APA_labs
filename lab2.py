@@ -72,23 +72,30 @@ sort_functions = [quickSort, mergeSort, heapSort, selectionSort]
 sort_names = ['QuickSort', 'MergeSort', 'HeapSort', 'SelectionSort']
 
 # Collect execution times for each sorting algorithm
-execution_times = []
+execution_times = [[] for _ in range(len(sort_functions))]
+x = range(100, 1100, 100)
 
-for sort_func, sort_name in zip(sort_functions, sort_names):
-    total_time = 0
-    for _ in range(10):  # Repeat 10 times for each algorithm
-        start_time = time.time()
-        sorted_data = sort_func(input_data.copy())
-        end_time = time.time()
-        total_time += (end_time - start_time)
-    average_time = total_time / 10  # Calculate the average time
-    execution_times.append(average_time)
-    print(f"Average execution time for {sort_name}: {average_time:.6f} seconds")
+for i in x:
+    for j, sort_func in enumerate(sort_functions):
+        total_time = 0
+        for _ in range(10):  # Repeat 10 times for each input size
+            input_data = [random.randint(1, 10000) for _ in range(i)]
+            start_time = time.time()
+            sorted_data = sort_func(input_data.copy())
+            end_time = time.time()
+            total_time += (end_time - start_time)
+        average_time = total_time / 10  # Calculate the average time
+        execution_times[j].append(average_time)
 
 # Plotting
 plt.figure(figsize=(10, 6))
-plt.bar(sort_names, execution_times, color=['blue', 'green', 'red', 'purple'])
-plt.xlabel('Sorting Algorithms')
+
+for i, sort_name in enumerate(sort_names):
+    plt.plot(x, execution_times[i], marker='o', label=sort_name)
+
+plt.xlabel('Input Size')
 plt.ylabel('Average Execution Time (seconds)')
 plt.title('Performance of Sorting Algorithms')
+plt.legend()
+plt.grid(True)
 plt.show()
