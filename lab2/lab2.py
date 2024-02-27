@@ -1,5 +1,7 @@
 import time
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 import random
 
 # Sorting algorithms
@@ -64,33 +66,34 @@ def selectionSort(arr):
         arr[i], arr[min_index] = arr[min_index], arr[i]
     return arr
 
-# Generate random input data
-input_data = [random.randint(1, 10000) for _ in range(1000)]
+# Generate random input data sizes
+input_sizes = list(range(100, 1100, 100))
 
 # Sorting functions and their names
 sort_functions = [quickSort, mergeSort, heapSort, selectionSort]
 sort_names = ['QuickSort', 'MergeSort', 'HeapSort', 'SelectionSort']
 
 # Collect execution times for each sorting algorithm
-execution_times = [[] for _ in range(len(sort_functions))]
-x = range(100, 1100, 100)
+execution_times = np.zeros((len(sort_functions), len(input_sizes)))
 
-for sort_func in sort_functions:
-    total_time = 0
-    for _ in range(10):  # Repeat 10 times for each algorithm
-        start_time = time.time()
-        sorted_data = sort_func(input_data.copy())
-        end_time = time.time()
-        total_time += (end_time - start_time)
-    average_time = total_time / 10  # Calculate the average time
-    execution_times.append(average_time)
-    print(f"Average execution time for {sort_func.__name__}: {average_time:.6f} seconds")
+for i, size in enumerate(input_sizes):
+    input_data = [random.randint(1, 10000) for _ in range(size)]
+    for j, sort_func in enumerate(sort_functions):
+        total_time = 0
+        for _ in range(10):  # Repeat 10 times for each algorithm
+            start_time = time.time()
+            sorted_data = sort_func(input_data.copy())
+            end_time = time.time()
+            total_time += (end_time - start_time)
+        average_time = total_time / 10  # Calculate the average time
+        execution_times[j][i] = average_time
+        print(f"{sort_names[j]} with input size {size} was executed in {total_time:.6f} seconds")
 
 # Plotting
 plt.figure(figsize=(10, 6))
 
 for i, sort_name in enumerate(sort_names):
-    plt.plot(x, execution_times[i], marker='o', label=sort_name)
+    plt.plot(input_sizes, execution_times[i], marker='o', label=sort_name)
 
 plt.xlabel('Input Size')
 plt.ylabel('Average Execution Time (seconds)')
