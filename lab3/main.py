@@ -59,18 +59,21 @@ num_vertices = 1000
 num_edges = 3000
 
 bfs_times = []
-dfs_recursive_times = []
+dfs_times = []
 for i in range(20):  # Repeat the experiment 20 times
     g = Graph(num_vertices, num_edges)
     bfs_time = g.bfs(0)
-    dfs_recursive_time = g.dfs_recursive(0)
+    dfs_time = g.dfs_recursive(0)
+    # dfs_time = g.dfs_iterative(0)
     bfs_times.append(bfs_time)
-    dfs_recursive_times.append(dfs_recursive_time)
+    dfs_times.append(dfs_time)
 
 plt.plot(range(1, 21), bfs_times, label='BFS')
-plt.plot(range(1, 21), dfs_recursive_times, label='DFS (Recursive)')
-plt.xlabel('Experiment')
+plt.plot(range(1, 21), dfs_times, label='DFS (Recursive)')
+# plt.plot(range(1, 21), dfs_times, label='DFS (Iterative)')
+plt.xlabel('Number of tests')
 plt.ylabel('Time (s)')
 plt.title('Comparison of BFS and Recursive DFS based on Time')
+# plt.title('Comparison of BFS and Iterative DFS based on Time')
 plt.legend()
 plt.show()
